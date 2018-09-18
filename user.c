@@ -23,6 +23,7 @@ int add(int par1, int par2){
 	return par1 + par2;
 }
 
+int add2(int par1, int par2);
 
 int __attribute__ ((__section__(".text.main")))
   main(void)
@@ -34,6 +35,7 @@ int __attribute__ ((__section__(".text.main")))
   count = 75;
   acum = 0;
   acum = outer(count);
+  acum = add2(count,acum);
   while(1){}
   return 0;
 }
