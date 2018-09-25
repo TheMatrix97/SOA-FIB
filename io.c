@@ -63,3 +63,4 @@ void printk(char *string)
   for (i = 0; string[i]; i++)
     printc(string[i]);
 }
+int write(int fd, char* buffer, int size);

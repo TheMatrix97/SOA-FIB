@@ -45,3 +45,7 @@ int sys_fork()
 void sys_exit()
 {  
 }
+
+void sys_write(int fd, char * buffer, int size){
+	
+}

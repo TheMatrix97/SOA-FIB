@@ -74,6 +74,8 @@ void setTrapHandler(int vector, void (*handler)(), int maxAccessibleFromPL)
 }
 
 void keyboard_handler();
+void syscall_handler_sysenter();
+void writeMSR(long value,long dir);
 
 void setIdt()
 {
@@ -86,6 +88,10 @@ void setIdt()
   /* ADD INITIALIZATION CODE FOR INTERRUPT VECTOR */
   setInterruptHandler(33, keyboard_handler, 0);
   set_idt_reg(&idtR);
+  
+  writeMSR(KERNEL_CS,0x174);
+  writeMSR(KERNEL_ESP, 0x175);
+  writeMSR(syscall_handler_sysenter, 0x176);
 }
 
 // KEYBOARD routine
@@ -95,7 +101,7 @@ void keyboard_routine(){
 		int dir = out & 0x7F;
 		char ctoprint = char_map[dir];
 		if(ctoprint == '\0') ctoprint = 'C';
-		printc_xy(0,0,ctoprint);
+		printc_xy(60,20,ctoprint);
 	}	
 }
 
