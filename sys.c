@@ -46,6 +46,20 @@ void sys_exit()
 {  
 }
 
-void sys_write(int fd, char * buffer, int size){
+
+int sys_write(int fd, char * buffer, int size){
+	int aux = check_fd(fd,ESCRIPTURA);
+	if(aux != 0) return aux;
+	if(buffer == NULL) return -59; //EBFONT (bad font)
+	if(size < 0) return -5; //EIO (i/o error)
+	return sys_write_console(buffer,size);
 	
+}
+
+int sys_write_console (char* buffer,int size){
+	int i;
+	for(i=0;i<size; i++){
+		printc(buffer[i]);
+	}
+	return size;
 }

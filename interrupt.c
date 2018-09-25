@@ -89,9 +89,9 @@ void setIdt()
   setInterruptHandler(33, keyboard_handler, 0);
   set_idt_reg(&idtR);
   
-  writeMSR(KERNEL_CS,0x174);
-  writeMSR(KERNEL_ESP, 0x175);
-  writeMSR(syscall_handler_sysenter, 0x176);
+  writeMSR(__KERNEL_CS,0x174);
+  writeMSR(KERNEL_ESP((union task_union*)pcb_init_task),0x175);
+  writeMSR((unsigned long)syscall_handler_sysenter, 0x176);
 }
 
 // KEYBOARD routine

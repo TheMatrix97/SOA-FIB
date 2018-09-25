@@ -26,12 +26,12 @@ SYSLDFLAGS = -T system.lds
 USRLDFLAGS = -T user.lds
 LINKFLAGS = -g
 
-SYSOBJ = interrupt.o entry.o sys_call_table.o io.o sched.o sys.o mm.o devices.o utils.o hardware.o list.o
+SYSOBJ = interrupt.o entry.o sys_call_table.o io.o sched.o sys.o mm.o devices.o utils.o hardware.o list.o writeMSR.o
 
 LIBZEOS = -L . -l zeos
 
 #add to USROBJ the object files required to complete the user program
-USROBJ = libc.o suma.o # libjp.a
+USROBJ = libc.o suma.o wrappers.o # libjp.a
 
 all:zeos.bin
 
@@ -52,10 +52,22 @@ bootsect.o: bootsect.s
 bootsect.s: bootsect.S Makefile
 	$(CPP) $(ASMFLAGS) -traditional $< -o $@
 
+wrappers.s: wrappers.S Makefile
+	$(CPP) $(ASMFLAGS) -traditional $< -o $@
+
+wrappers.o: wrapperss.s
+	$(AS) -o $@ $<
+
 suma.s: suma.S Makefile
 	$(CPP) $(ASMFLAGS) -traditional $< -o $@
 
 suma.o: suma.s
+	$(AS) -o $@ $<
+	
+writeMSR.s: writeMSR.S Makefile
+	$(CPP) $(ASMFLAGS) -traditional $< -o $@
+
+writeMSR.o: writeMSR.s
 	$(AS) -o $@ $<
 
 entry.s: entry.S $(INCLUDEDIR)/asm.h $(INCLUDEDIR)/segment.h
