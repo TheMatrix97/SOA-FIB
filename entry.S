@@ -76,3 +76,10 @@ ENTRY(keyboard_handler)
 	EOI
 	RESTORE_ALL
 	iret
+	
+ENTRY(clock_handler)
+	SAVE_ALL
+	call clock_routine
+	EOI
+	RESTORE_ALL
+	iret
