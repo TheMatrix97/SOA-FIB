@@ -90,7 +90,7 @@ void setIdt()
   set_idt_reg(&idtR);
   
   writeMSR(__KERNEL_CS,0x174);
-  writeMSR(KERNEL_ESP((union task_union*)pcb_init_task),0x175);
+  writeMSR(INITIAL_ESP,0x175);
   writeMSR((unsigned long)syscall_handler_sysenter, 0x176);
 }
 

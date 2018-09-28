@@ -55,7 +55,7 @@ bootsect.s: bootsect.S Makefile
 wrappers.s: wrappers.S Makefile
 	$(CPP) $(ASMFLAGS) -traditional $< -o $@
 
-wrappers.o: wrapperss.s
+wrappers.o: wrappers.s
 	$(AS) -o $@ $<
 
 suma.s: suma.S Makefile

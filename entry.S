@@ -92,7 +92,7 @@ ENTRY(syscall_handler_sysenter)
 	call *sys_call_table(,%eax,0x04)
 	jmp sysenter_fin
 sysenter_err:
-	movl $-ENOSYS, %eax
+	movl $-38, %eax
 sysenter_fin:
 	movl %eax, 0x18(%esp)
 	RESTORE_ALL

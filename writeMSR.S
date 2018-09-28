@@ -1,9 +1,12 @@
 #include <asm.h>
 ENTRY(writeMSR)
-	SAVE_ALL
+	push %ebp
+	movl %esp, %ebp
+	pushl %edx
 	movl %ebx, %eax
 	movl $0, %edx
 	WRMSR
-	RESTORE_ALL
+	pop %edx
+	pop %ebp
 	ret
 	
