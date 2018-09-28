@@ -75,7 +75,7 @@ void setTrapHandler(int vector, void (*handler)(), int maxAccessibleFromPL)
 
 void keyboard_handler();
 void syscall_handler_sysenter();
-void writeMSR(long value,long dir);
+void writeMSR(int value,int dir);
 
 void setIdt()
 {

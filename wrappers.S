@@ -5,12 +5,11 @@ ENTRY(write)
 	push %ebx
 	push %ecx
 	push %edx
-	movl 0(%esp),%ebx
-	movl 4(%esp),%ecx
-	movl 8(%esp),%edx
+	movl 8(%ebp),%ebx
+	movl 12(%ebp),%ecx
+	movl 16(%ebp),%edx
 	movl $4,%eax
 	sysenter
-	movl %eax,18(%esp);
 	pop %edx
 	pop %ecx
 	pop %ebx
