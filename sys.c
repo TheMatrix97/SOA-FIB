@@ -45,3 +45,13 @@ int sys_fork()
 void sys_exit()
 {  
 }
+
+
+int sys_write(int fd, char * buffer, int size){
+	int aux = check_fd(fd,ESCRIPTURA);
+	if(aux != 0) return aux;
+	if(buffer == NULL) return -59; //EBFONT (bad font)
+	if(size < 0) return -5; //EIO (i/o error)
+	return sys_write_console(buffer,size);
+	
+}

@@ -77,6 +77,29 @@ ENTRY(keyboard_handler)
 	RESTORE_ALL
 	iret
 	
+ENTRY(syscall_handler_sysenter)
+	push $__USER_DS
+	push %ebp
+	pushfl
+	push $__USER_CS
+	push 4(%ebp)
+	SAVE_ALL
+	cmpl $0, %eax
+	jl sysenter_err
+	cmpl $MAX_SYSCALL, %eax
+	jg sysenter_err
+	call *sys_call_table(,%eax,0x04)
+	jmp sysenter_fin
+sysenter_err:
+	movl $-38, %eax
+sysenter_fin:
+	movl %eax, 0x18(%esp)
+	RESTORE_ALL
+	movl (%esp),%edx
+	movl 12(%esp),%ecx
+	sti
+	sysexit
+	
 ENTRY(clock_handler)
 	SAVE_ALL
 	call clock_routine
