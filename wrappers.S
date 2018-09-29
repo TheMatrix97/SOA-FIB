@@ -24,3 +24,20 @@ label:
 	pop %ebx
 	pop %ebp
 	ret
+	
+ENTRY(gettime)
+	push %ebp
+	movl %esp, %ebp
+	lea label2,%eax
+	//hacemos push de la direccion de retorno del sysenter
+	push %eax 
+	movl $10,%eax
+	push %ebp
+	//fake dynamic link para que el handler pueda acceder a los valores de esta pila
+	movl %esp,%ebp
+	sysenter
+label2:
+	pop %ebp
+	pop %eax
+	pop %ebp
+	ret

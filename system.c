@@ -57,6 +57,9 @@ inline void set_seg_regs(Word data_sel, Word stack_sel, DWord esp)
 /*
  *   Main entry point to ZEOS Operating System
  */
+ 
+int zeos_ticks;
+
 int __attribute__((__section__(".text.main")))
   main(void)
 {
@@ -73,6 +76,7 @@ int __attribute__((__section__(".text.main")))
   /*** DO *NOT* ADD ANY CODE IN THIS ROUTINE BEFORE THIS POINT ***/
 
   printk("Kernel Loaded!    ");
+  zeos_ticks = 0;
 
 
   /* Initialize hardware data */

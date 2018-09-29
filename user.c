@@ -1,5 +1,4 @@
 #include <libc.h>
-#include <io.h>
 
 char buff[24];
 
@@ -37,8 +36,16 @@ int __attribute__ ((__section__(".text.main")))
   acum = 0;
   acum = outer(count);
   acum = add2(count,acum);
+  int ticks1 = gettime();
+  itoa(ticks1,buff);
+  
+  write(1,&buff[0],sizeof(buff));
   char aux[40] = "Hello world";
   int ret = write(1,&aux[0],sizeof(aux));
+  
+  ticks1 = gettime();
+  itoa(ticks1,buff);
+  write(1,&buff[0],sizeof(buff));
   while(1){}
   return 0;
 }
