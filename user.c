@@ -1,4 +1,5 @@
 #include <libc.h>
+#include <io.h>
 
 char buff[24];
 
@@ -36,6 +37,8 @@ int __attribute__ ((__section__(".text.main")))
   acum = 0;
   acum = outer(count);
   acum = add2(count,acum);
+  char aux[40] = "Hello world";
+  int ret = write(1,&aux[0],sizeof(aux));
   while(1){}
   return 0;
 }
