@@ -76,7 +76,6 @@ ENTRY(keyboard_handler)
 	EOI
 	RESTORE_ALL
 	iret
-
 	
 ENTRY(syscall_handler_sysenter)
 	push $__USER_DS
@@ -100,4 +99,10 @@ sysenter_fin:
 	movl 12(%esp),%ecx
 	sti
 	sysexit
-
+	
+ENTRY(clock_handler)
+	SAVE_ALL
+	call clock_routine
+	EOI
+	RESTORE_ALL
+	iret
