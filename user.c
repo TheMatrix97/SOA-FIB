@@ -39,9 +39,6 @@ int __attribute__ ((__section__(".text.main")))
  
   char aux[24] = "Hello world";
   write(1,&aux[0],sizeof(aux));
-  int time = gettime();
-  itoa(time,aux);
-  write(1,&aux[0],sizeof(aux));
  
   while(1){
 	  //test gettime
