@@ -18,7 +18,9 @@ ENTRY(write)
 	sysenter
 label:
 	pop %ebp
-	pop %eax
+	//sumamos 4 a la pila para eliminar la direccion de retorno
+	//no hacemos pop eax pork nos cargamos el resultado de sysenter...
+	addl $4, %esp
 	pop %edx
 	pop %ecx
 	pop %ebx
@@ -38,6 +40,6 @@ ENTRY(gettime)
 	sysenter
 label2:
 	pop %ebp
-	pop %eax
+	addl $4, %esp
 	pop %ebp
 	ret

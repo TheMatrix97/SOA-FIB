@@ -25,27 +25,27 @@ int add(int par1, int par2){
 
 int add2(int par1, int par2);
 
+void print_time(){
+  int time = gettime();
+  itoa(time,buff);
+  write(1,&buff[0],sizeof(buff));
+}
+
 int __attribute__ ((__section__(".text.main")))
   main(void)
 {
     /* Next line, tries to move value 0 to CR3 register. This register is a privileged one, and so it will raise an exception */
      /* __asm__ __volatile__ ("mov %0, %%cr3"::"r" (0) ); */
-
-  long count, acum;
-  count = 75;
-  acum = 0;
-  acum = outer(count);
-  acum = add2(count,acum);
-  int ticks1 = gettime();
-  itoa(ticks1,buff);
-  
-  write(1,&buff[0],sizeof(buff));
-  char aux[40] = "Hello world";
-  int ret = write(1,&aux[0],sizeof(aux));
-  
-  ticks1 = gettime();
-  itoa(ticks1,buff);
-  write(1,&buff[0],sizeof(buff));
-  while(1){}
+ 
+  char aux[24] = "Hello world";
+  write(1,&aux[0],sizeof(aux));
+  int time = gettime();
+  itoa(time,aux);
+  write(1,&aux[0],sizeof(aux));
+ 
+  while(1){
+	  //test gettime
+	  //print_time(); 
+	}
   return 0;
 }
