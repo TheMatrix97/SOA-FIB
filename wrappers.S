@@ -18,9 +18,28 @@ ENTRY(write)
 	sysenter
 label:
 	pop %ebp
-	pop %eax
+	//sumamos 4 a la pila para eliminar la direccion de retorno
+	//no hacemos pop eax pork nos cargamos el resultado de sysenter...
+	addl $4, %esp
 	pop %edx
 	pop %ecx
 	pop %ebx
+	pop %ebp
+	ret
+	
+ENTRY(gettime)
+	push %ebp
+	movl %esp, %ebp
+	lea label2,%eax
+	//hacemos push de la direccion de retorno del sysenter
+	push %eax 
+	movl $10,%eax
+	push %ebp
+	//fake dynamic link para que el handler pueda acceder a los valores de esta pila
+	movl %esp,%ebp
+	sysenter
+label2:
+	pop %ebp
+	addl $4, %esp
 	pop %ebp
 	ret

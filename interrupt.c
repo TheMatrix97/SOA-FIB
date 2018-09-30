@@ -6,6 +6,7 @@
 #include <segment.h>
 #include <hardware.h>
 #include <io.h>
+#include <utils.h>
 
 #include <zeos_interrupt.h>
 
@@ -108,7 +109,9 @@ void keyboard_routine(){
 }
 
 // KEYBOARD routine
+
 void clock_routine(){
+	++zeos_ticks;
 	zeos_show_clock();
 }
 
