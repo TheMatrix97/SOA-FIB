@@ -9,9 +9,9 @@
 int errno;
 
 void perror(){
-		char buff;
-		itoa(-errno, &buff);
-		write(1, &buff, sizeof(buff)); 
+		char buff[2];
+		itoa(-errno, buff);
+		write(1, &buff[0], sizeof(buff)); 
 }
 
 void itoa(int a, char *b)

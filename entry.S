@@ -4,6 +4,7 @@
 
 #include <asm.h>
 #include <segment.h>
+#include <errno.h>
 
 
 /**************************************************/
@@ -82,6 +83,7 @@ ENTRY(syscall_handler_sysenter)
 	push %ebp
 	pushfl
 	push $__USER_CS
+	//Guardamos @ret
 	push 4(%ebp)
 	SAVE_ALL
 	cmpl $0, %eax
@@ -91,10 +93,12 @@ ENTRY(syscall_handler_sysenter)
 	call *sys_call_table(,%eax,0x04)
 	jmp sysenter_fin
 sysenter_err:
-	movl $-38, %eax
+	movl $-ENOSYS, %eax
 sysenter_fin:
-	movl %eax, 0x18(%esp)
+	//guardar el valor de ret del write en la pila de usuario
+	movl %eax, 0x18(%esp) 
 	RESTORE_ALL
+	//metemos @ret en edx y en ecx stack pointer al top de la pila user
 	movl (%esp),%edx
 	movl 12(%esp),%ecx
 	sti
