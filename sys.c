@@ -52,6 +52,8 @@ void sys_exit()
 
 int sys_write(int fd, char * buffer, int size){
 	int aux = check_fd(fd,ESCRIPTURA);
+	char *sysbuff;
+	if(copy_from_user(&buffer,&sysbuff,sizeof(buffer)) < 0) return -EIO;
 	if(aux >= 0){ //fd nice!
 		if(buffer == NULL){
 			return -EBFONT;
@@ -60,7 +62,7 @@ int sys_write(int fd, char * buffer, int size){
 		if(size < 0){
 			return -EIO; //EIO (i/o error)
 		}
-		return sys_write_console(buffer,size);
+		return sys_write_console(sysbuff,size);
 	}else{
 		return aux;
 	}	
