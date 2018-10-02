@@ -38,7 +38,7 @@ int __attribute__ ((__section__(".text.main")))
      /* __asm__ __volatile__ ("mov %0, %%cr3"::"r" (0) ); */
  
   char aux[24] = "Hello world";
-  write(1,&aux[0],sizeof(aux));
+  if(write(0,&aux[0],sizeof(aux)) < 0) perror();
  
   while(1){
 	  //test gettime

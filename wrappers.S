@@ -17,6 +17,7 @@ ENTRY(write)
 	movl %esp,%ebp
 	sysenter
 label:
+	movl %eax, errno
 	pop %ebp
 	//sumamos 4 a la pila para eliminar la direccion de retorno
 	//no hacemos pop eax pork nos cargamos el resultado de sysenter...

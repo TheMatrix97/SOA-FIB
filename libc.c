@@ -8,6 +8,12 @@
 
 int errno;
 
+void perror(){
+		char buff;
+		itoa(-errno, &buff);
+		write(1, &buff, sizeof(buff)); 
+}
+
 void itoa(int a, char *b)
 {
   int i, i1;
