@@ -6,15 +6,19 @@
 #include <mm.h>
 #include <io.h>
 
+struct list_head freequeue;
+struct list_head readyqueue;
+struct task_struct* idle_task;
+
 union task_union task[NR_TASKS]
   __attribute__((__section__(".data.task")));
 
-#if 0
+//#if 0
 struct task_struct *list_head_to_task_struct(struct list_head *l)
 {
   return list_entry( l, struct task_struct, list);
 }
-#endif
+//#endif
 
 extern struct list_head blocked;
 
@@ -55,7 +59,17 @@ void cpu_idle(void)
 
 void init_idle (void)
 {
-
+	struct list_head *first = list_first(&freequeue); //obtenemos un taskunion
+	struct task_struct *first_str = list_head_to_task_struct(first);
+	first_str->PID = 0;
+	allocate_DIR(first_str);
+	union task_union ctx;
+	ctx.task = *first_str;
+	task[0] = ctx;
+	idle_task = first_str;
+	ctx.stack[KERNEL_STACK_SIZE - 1] = (unsigned long) &cpu_idle;
+	ctx.stack[KERNEL_STACK_SIZE - 2] = 0;
+	first_str->ebp_pos = KERNEL_STACK_SIZE - 2;
 }
 
 void init_task1(void)
@@ -64,6 +78,10 @@ void init_task1(void)
 
 
 void init_sched(){
+	int i;
+	INIT_LIST_HEAD(&freequeue); //init freequeue
+	for(i = 0; i < NR_TASKS; i++) list_add_tail(&task[i].task.list, &freequeue); //add procs a freeque
+	INIT_LIST_HEAD(&readyqueue); //ini ready empty queue
 
 }
 
