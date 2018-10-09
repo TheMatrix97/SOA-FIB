@@ -60,20 +60,33 @@ void cpu_idle(void)
 void init_idle (void)
 {
 	struct list_head *first = list_first(&freequeue); //obtenemos un taskunion
+	list_del(first);
 	struct task_struct *first_str = list_head_to_task_struct(first);
 	first_str->PID = 0;
 	allocate_DIR(first_str);
 	union task_union ctx;
 	ctx.task = *first_str;
-	task[0] = ctx;
+	//task[0] = ctx;
 	idle_task = first_str;
-	ctx.stack[KERNEL_STACK_SIZE - 1] = (unsigned long) &cpu_idle;
-	ctx.stack[KERNEL_STACK_SIZE - 2] = 0;
-	first_str->ebp_pos = KERNEL_STACK_SIZE - 2;
+	ctx.stack[KERNEL_STACK_SIZE - 1] = (unsigned long) &cpu_idle; //dir del codigo a ejecutar por la nueva task
+	ctx.stack[KERNEL_STACK_SIZE - 2] = 0; //valor del ebp al volver
+	first_str->ebp_pos = (unsigned long)&ctx.stack[KERNEL_STACK_SIZE - 2]; //posicion del stack donde guardamos el ebp
 }
 
 void init_task1(void)
 {
+	struct list_head *first = list_first(&freequeue); //obtenemos un taskunion
+	list_del(first);
+	struct task_struct *first_str = list_head_to_task_struct(first);
+	first_str->PID = 1;
+	allocate_DIR(first_str);
+	union task_union ctx;
+	ctx.task = *first_str; //insertem la task al task union del ctx
+	//task[1] = ctx;
+	
+	set_user_pages(first_str); //inicialitzar espai d'adreces del proc
+	tss.esp0 = (DWord)(ctx.stack); //canviem el esp per a que apunti a la nova pila de proc
+	set_cr3(first_str->dir_pages_baseAddr); //actualitzem el cr3 per a que apunti al directori del nou proc
 }
 
 
@@ -83,6 +96,12 @@ void init_sched(){
 	for(i = 0; i < NR_TASKS; i++) list_add_tail(&task[i].task.list, &freequeue); //add procs a freeque
 	INIT_LIST_HEAD(&readyqueue); //ini ready empty queue
 
+}
+
+void inner_task_switch(union task_union *new){
+	tss.esp0 = &(new -> stack[KERNEL_STACK_SIZE]);
+	set_cr3(new->task->dir_pages_baseAddr);
+	switch_tasks(&current()->ebp_pos, new->task.ebp_pos);
 }
 
 struct task_struct* current()
