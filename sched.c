@@ -5,7 +5,6 @@
 #include <sched.h>
 #include <mm.h>
 #include <io.h>
-#include <libc.h>
 
 struct list_head freequeue;
 struct list_head readyqueue;
