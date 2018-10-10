@@ -79,10 +79,9 @@ void init_task1(void)
 	struct task_struct *first_str = list_head_to_task_struct(first);
 	first_str->PID = 1;
 	allocate_DIR(first_str);
-	union task_union ctx;
-	ctx.task = *first_str; //insertem la task al task union del ctxd
+	union task_union *ctx = (union task_union*)first_str;
 	set_user_pages(first_str); //inicialitzar espai d'adreces del proc
-	tss.esp0 = (DWord)(ctx.stack); //canviem el esp per a que apunti a la nova pila de proc
+	tss.esp0 = (int)&(ctx->stack[KERNEL_STACK_SIZE]); //canviem el esp per a que apunti a la nova pila de proc
 	set_cr3(first_str->dir_pages_baseAddr); //actualitzem el cr3 per a que apunti al directori del nou proc
 }
 
