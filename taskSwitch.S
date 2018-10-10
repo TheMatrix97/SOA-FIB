@@ -18,4 +18,5 @@ ENTRY(switch_tasks)
 	movl 4(%esp), %eax
 	movl %ebp, (%eax)
 	movl 8(%esp),%esp
+	popl %ebp
 	ret

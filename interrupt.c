@@ -7,6 +7,7 @@
 #include <hardware.h>
 #include <io.h>
 #include <utils.h>
+#include <sched.h>
 
 #include <zeos_interrupt.h>
 
@@ -99,6 +100,7 @@ void setIdt()
 
 // KEYBOARD routine
 void keyboard_routine(){
+	task_switch((union task_union* )idle_task);
 	unsigned char out = inb(0x60);
 	if((out & 0x80) == 0x00){
 		int dir = out & 0x7F;

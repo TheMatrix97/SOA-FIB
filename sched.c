@@ -8,7 +8,7 @@
 
 struct list_head freequeue;
 struct list_head readyqueue;
-struct task_struct* idle_task;
+struct task_struct *idle_task;
 
 union task_union task[NR_TASKS]
   __attribute__((__section__(".data.task")));
@@ -66,11 +66,10 @@ void init_idle (void)
 	allocate_DIR(first_str);
 	union task_union ctx;
 	ctx.task = *first_str;
-	//task[0] = ctx;
-	idle_task = first_str;
 	ctx.stack[KERNEL_STACK_SIZE - 1] = (unsigned long) &cpu_idle; //dir del codigo a ejecutar por la nueva task
 	ctx.stack[KERNEL_STACK_SIZE - 2] = 0; //valor del ebp al volver
 	first_str->ebp_pos = (unsigned long)&ctx.stack[KERNEL_STACK_SIZE - 2]; //posicion del stack donde guardamos el ebp
+	idle_task = first_str;
 }
 
 void init_task1(void)
@@ -99,7 +98,7 @@ void init_sched(){
 }
 
 void inner_task_switch(union task_union *new){
-	tss.esp0 = (DWord)&(new -> stack[KERNEL_STACK_SIZE]);
+	tss.esp0 = (int)&(new -> stack[KERNEL_STACK_SIZE]);
 	set_cr3(new->task.dir_pages_baseAddr);
 	switch_tasks(&current()->ebp_pos, new->task.ebp_pos);
 }
