@@ -99,8 +99,8 @@ void init_sched(){
 }
 
 void inner_task_switch(union task_union *new){
-	tss.esp0 = &(new -> stack[KERNEL_STACK_SIZE]);
-	set_cr3(new->task->dir_pages_baseAddr);
+	tss.esp0 = (DWord)&(new -> stack[KERNEL_STACK_SIZE]);
+	set_cr3(new->task.dir_pages_baseAddr);
 	switch_tasks(&current()->ebp_pos, new->task.ebp_pos);
 }
 

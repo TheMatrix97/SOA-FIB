@@ -44,6 +44,7 @@ void init_sched(void);
 struct task_struct * current();
 
 void task_switch(union task_union*t);
+void switch_tasks(unsigned long* ebp_pos, unsigned long ebp_pos_new);
 
 void inner_task_switch(union task_union *new);
 
