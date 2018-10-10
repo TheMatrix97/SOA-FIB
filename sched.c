@@ -5,6 +5,7 @@
 #include <sched.h>
 #include <mm.h>
 #include <io.h>
+#include <libc.h>
 
 struct list_head freequeue;
 struct list_head readyqueue;
@@ -64,11 +65,10 @@ void init_idle (void)
 	struct task_struct *first_str = list_head_to_task_struct(first);
 	first_str->PID = 0;
 	allocate_DIR(first_str);
-	union task_union ctx;
-	ctx.task = *first_str;
-	ctx.stack[KERNEL_STACK_SIZE - 1] = (unsigned long) &cpu_idle; //dir del codigo a ejecutar por la nueva task
-	ctx.stack[KERNEL_STACK_SIZE - 2] = 0; //valor del ebp al volver
-	first_str->ebp_pos = (unsigned long)&ctx.stack[KERNEL_STACK_SIZE - 2]; //posicion del stack donde guardamos el ebp
+	union task_union *ctx = (union task_union*)first_str;
+	ctx->stack[KERNEL_STACK_SIZE - 1] = (unsigned long) &cpu_idle; //dir del codigo a ejecutar por la nueva task
+	ctx->stack[KERNEL_STACK_SIZE - 2] = 0; //valor del ebp al volver
+	first_str->ebp_pos = (unsigned long)&ctx->stack[KERNEL_STACK_SIZE - 2]; //posicion del stack donde guardamos el ebp
 	idle_task = first_str;
 }
 
@@ -80,9 +80,7 @@ void init_task1(void)
 	first_str->PID = 1;
 	allocate_DIR(first_str);
 	union task_union ctx;
-	ctx.task = *first_str; //insertem la task al task union del ctx
-	//task[1] = ctx;
-	
+	ctx.task = *first_str; //insertem la task al task union del ctxd
 	set_user_pages(first_str); //inicialitzar espai d'adreces del proc
 	tss.esp0 = (DWord)(ctx.stack); //canviem el esp per a que apunti a la nova pila de proc
 	set_cr3(first_str->dir_pages_baseAddr); //actualitzem el cr3 per a que apunti al directori del nou proc
