@@ -46,3 +46,40 @@ label2:
 	addl $4, %esp
 	pop %ebp
 	ret
+	
+ENTRY(getpid)
+	push %ebp
+	movl %esp, %ebp
+	lea label2pid,%eax
+	//hacemos push de la direccion de retorno del sysenter
+	push %eax 
+	movl $20,%eax 
+	//20 = get_pid
+	push %ebp
+	//fake dynamic link para que el handler pueda acceder a los valores de esta pila
+	movl %esp,%ebp
+	sysenter
+label2pid:
+	pop %ebp
+	addl $4, %esp
+	pop %ebp
+	ret
+	
+ENTRY(fork)
+	push %ebp
+	movl %esp, %ebp
+	lea labelFork,%eax
+	//hacemos push de la direccion de retorno del sysenter
+	push %eax 
+	movl $2,%eax 
+	//2 = fork
+	push %ebp
+	//fake dynamic link para que el handler pueda acceder a los valores de esta pila
+	movl %esp,%ebp
+	sysenter
+labelFork:
+	pop %ebp
+	addl $4, %esp
+	pop %ebp
+	ret
+

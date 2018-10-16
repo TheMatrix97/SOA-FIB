@@ -42,6 +42,41 @@ int sys_fork()
 
   // creates the child process
   
+  //get a new task struct for the process
+  if(list_empty(&freequeue)) return -1;
+  struct list_head *first = list_first(&freequeue); //obtenemos un taskunion
+  list_del(first);
+  struct task_struct *first_str = list_head_to_task_struct(first);
+  union task_union *padre = (union task_union *) current(); //union del pare
+  union task_union *son = padre;
+  //Copiar data pare a fill
+  copy_data(padre,son,sizeof(union task_union));
+  allocate_DIR(first_str);
+  
+  //reserva de frames per data+stack
+  int frames[NUM_PAG_DATA];
+  int i;
+  for(i = 0; i < NUM_PAG_DATA; i++){
+	int frame_num = alloc_frame();
+	if(frame_num == -1) return -1; //TODO liberar todos los frames
+  }
+  
+  page_table_entry * parePT = getPT(current());
+  page_table_entry * childPT = get_PT(first_str);
+  //set paginas del hijo a frames del padre (codigo) -> shared entre padre hijo
+  for(i = 0; i < NUM_PAG_CODE; ++i){
+	  set_ss_pag(childPT, PAG_LOG_INIT_CODE+i, get_frame(parePT, PAG_LOG_INIT_CODE+i));
+  }
+  //set paginas hijo a los frames reservados
+  for(i = 0; i < NUM_PAG_DATA; ++i){
+	  set_ss_pag(childPT, PAG_LOG_INIT_DATA+i, frames[i]);
+  }
+
+  
+  
+  
+  
+  
   return PID;
 }
 
@@ -71,3 +106,4 @@ int sys_write(int fd, char * buffer, int size){
 int sys_gettime(){
 	return zeos_ticks;
 }
+

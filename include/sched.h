@@ -26,6 +26,7 @@ union task_union {
   unsigned long stack[KERNEL_STACK_SIZE];    /* pila de sistema, per procés */
 };
 
+extern struct list_head freequeue;
 extern union task_union task[NR_TASKS]; /* Vector de tasques */
 extern struct task_struct *idle_task;
 
