@@ -27,6 +27,7 @@ union task_union {
 };
 
 extern struct list_head freequeue;
+extern struct list_head readyqueue;
 extern union task_union task[NR_TASKS]; /* Vector de tasques */
 extern struct task_struct *idle_task;
 
@@ -42,6 +43,7 @@ void init_task1(void);
 void init_idle(void);
 
 void init_sched(void);
+int ret_from_fork();
 
 struct task_struct * current();
 
