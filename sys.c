@@ -82,14 +82,14 @@ int sys_fork()
   //no podemos hacer copy directo ya que las @logicas del hijo i padre són las mismas i el padre tiene sus traducciones
   //crearemos traducciones en la TP(al final) del padre que apunten a los frames fisicos del hijo (vec frames)
   //una vez tengamos las traducciones podremos copiar de data padre a la nueva pag del padre
-  unsigned int basepila = PAG_LOG_INIT_DATA + (NUM_PAG_DATA*PAGE_SIZE); //@logica base;
+  unsigned long basepila = PAG_LOG_INIT_DATA + (NUM_PAG_DATA); //@logica base;
   for(i=0; i < NUM_PAG_DATA; i++){
-  	unsigned int pag_nueva = basepila + (i*PAGE_SIZE); //@LOG nueva pag
+  	unsigned long pag_nueva = basepila + i; //@ nueva pag
   	set_ss_pag(parePT, pag_nueva,frames[i]); //allocatamos data del hijo en el padre
-  	unsigned int add_origen = PAG_LOG_INIT_DATA + (i*PAGE_SIZE); //data del padre
-  	unsigned int add_dest = pag_nueva; //pag nueva creada en el padre
+  	unsigned long add_origen = (PAG_LOG_INIT_DATA + (i))*PAGE_SIZE; //data del padre pasamos a @log
+  	unsigned long add_dest = pag_nueva*PAGE_SIZE; //pag nueva creada en el padre pasamos a @log
   	copy_data((void*)add_origen, (void*)add_dest, PAGE_SIZE); //copia una pagina
-  	del_ss_pag(parePT, pag_nueva); //BORRAMOS la página creada
+  	del_ss_pag(parePT, pag_nueva); //BORRAMOS la página creada*/
   }
   set_cr3(get_DIR(current())); //flush de tlb
   int pid_hijo = current()->PID + 200; //todos los procs del orden 200 serán hijos
