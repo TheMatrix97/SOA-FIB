@@ -11,6 +11,9 @@
 
 #define NR_TASKS      10
 #define KERNEL_STACK_SIZE	1024
+#define RUNNING 1
+#define BLOCKED 0
+#define READY 2
 
 enum state_t { ST_RUN, ST_READY, ST_BLOCKED };
 
@@ -19,6 +22,8 @@ struct task_struct {
   page_table_entry * dir_pages_baseAddr;
   struct list_head list;
   unsigned long ebp_pos;
+  unsigned int quantum;
+  unsigned int state;
 };
 
 union task_union {
@@ -36,6 +41,7 @@ extern struct task_struct *idle_task;
 #define KERNEL_ESP(t)       	(DWord) &(t)->stack[KERNEL_STACK_SIZE]
 
 #define INITIAL_ESP       	KERNEL_ESP(&task[1])
+#define QUANTUM 200
 
 /* Inicialitza les dades del proces inicial */
 void init_task1(void);
@@ -48,7 +54,7 @@ int ret_from_fork();
 struct task_struct * current();
 
 void task_switch(union task_union*t);
-void switch_tasks(unsigned long* ebp_pos, unsigned long ebp_pos_new);
+void change_context(unsigned long* ebp_pos, unsigned long ebp_pos_new);
 
 void inner_task_switch(union task_union *new);
 
@@ -65,5 +71,8 @@ void sched_next_rr();
 void update_process_state_rr(struct task_struct *t, struct list_head *dest);
 int needs_sched_rr();
 void update_sched_data_rr();
+int get_quantum (struct task_struct* t);
+void set_quantum (struct task_struct* t, int new_quantum);
+void scheduler();
 
 #endif  /* __SCHED_H__ */

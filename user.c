@@ -44,7 +44,7 @@ int __attribute__ ((__section__(".text.main")))
   itoa(f,aux2);
   write(1,&aux2[0],sizeof(aux2));
   while(1){
-	  //test gettime
+	 // test gettime
 	  //print_time(); 
 	}
   return 0;

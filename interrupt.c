@@ -77,7 +77,6 @@ void setTrapHandler(int vector, void (*handler)(), int maxAccessibleFromPL)
 
 void keyboard_handler();
 void syscall_handler_sysenter();
-void writeMSR(int value,int dir);
 void clock_handler();
 
 void setIdt()
@@ -100,7 +99,6 @@ void setIdt()
 
 // KEYBOARD routine
 void keyboard_routine(){
-	task_switch((union task_union* )idle_task);
 	unsigned char out = inb(0x60);
 	if((out & 0x80) == 0x00){
 		int dir = out & 0x7F;
@@ -113,6 +111,7 @@ void keyboard_routine(){
 // KEYBOARD routine
 
 void clock_routine(){
+  scheduler();
 	++zeos_ticks;
 	zeos_show_clock();
 }

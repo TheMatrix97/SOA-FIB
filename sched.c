@@ -3,6 +3,7 @@
  */
 
 #include <sched.h>
+#include <interrupt.h>
 #include <mm.h>
 
 struct list_head freequeue;
@@ -32,6 +33,46 @@ page_table_entry * get_DIR (struct task_struct *t)
 page_table_entry * get_PT (struct task_struct *t) 
 {
 	return (page_table_entry *)(((unsigned int)(t->dir_pages_baseAddr->bits.pbase_addr))<<12);
+}
+
+void scheduler(){
+	update_sched_data_rr();
+	if(needs_sched_rr() == 1){ //si ha de sortir de cpu
+		update_process_state_rr(current(),&readyqueue);
+		sched_next_rr();
+	}
+}
+
+void sched_next_rr(){
+	struct task_struct* aux;
+	if(!list_empty(&readyqueue)){
+		struct list_head *first = list_first(&readyqueue);
+		list_del(first);
+		aux = list_head_to_task_struct(first);
+	}else aux = idle_task;
+	aux->state = RUNNING;
+	aux->quantum = QUANTUM;
+	task_switch((union task_union* )aux);
+}
+
+
+void update_sched_data_rr(){
+	current()->quantum--;
+}
+int needs_sched_rr(){
+	if(current()->quantum <= 0){
+		return 1;
+	} return 0;
+}
+void update_process_state_rr (struct task_struct* t, struct list_head *dst_queue){
+	if(t->state == READY){
+		list_del(&t->list);
+		t->state = RUNNING;
+	}else if(t->state == RUNNING){
+		list_add_tail(&t->list,&readyqueue);
+		t->state = READY;
+	}
+
 }
 
 
@@ -67,6 +108,8 @@ void init_idle (void)
 	ctx->stack[KERNEL_STACK_SIZE - 2] = 0; //valor del ebp al volver
 	first_str->ebp_pos = (unsigned long)&ctx->stack[KERNEL_STACK_SIZE - 2]; //posicion del stack donde guardamos el ebp
 	idle_task = first_str;
+	set_quantum(first_str, QUANTUM);
+  	writeMSR(INITIAL_ESP,0x175);
 }
 
 void init_task1(void)
@@ -78,8 +121,10 @@ void init_task1(void)
 	allocate_DIR(first_str);
 	union task_union *ctx = (union task_union*)first_str;
 	set_user_pages(first_str); //inicialitzar espai d'adreces del proc
-	tss.esp0 = (int)&(ctx->stack[KERNEL_STACK_SIZE]); //canviem el esp per a que apunti a la nova pila de proc
-	set_cr3(first_str->dir_pages_baseAddr); //actualitzem el cr3 per a que apunti al directori del nou proc
+	tss.esp0 = (int)&(ctx->stack[KERNEL_STACK_SIZE]); //canviem el esp per a que apunti a la nova pila de proc //actualitzem el cr3 per a que apunti al directori del nou proc
+	set_quantum(first_str, QUANTUM);
+  	writeMSR(INITIAL_ESP,0x175);
+  	set_cr3(first_str->dir_pages_baseAddr);
 }
 
 
@@ -94,7 +139,15 @@ void init_sched(){
 void inner_task_switch(union task_union *new){
 	tss.esp0 = (int)&(new -> stack[KERNEL_STACK_SIZE]);
 	set_cr3(new->task.dir_pages_baseAddr);
-	switch_tasks(&current()->ebp_pos, new->task.ebp_pos);
+	change_context(&current()->ebp_pos, new->task.ebp_pos);
+}
+
+int get_quantum (struct task_struct* t){
+	return t->quantum;
+
+}
+void set_quantum (struct task_struct* t, int new_quantum){
+	t->quantum = new_quantum;
 }
 
 struct task_struct* current()

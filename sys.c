@@ -95,6 +95,7 @@ int sys_fork()
   int pid_hijo = current()->PID + 200; //todos los procs del orden 200 serán hijos
   first_str->PID = pid_hijo;
   first_str->dir_pages_baseAddr = get_DIR(first_str);
+  set_quantum(first_str, get_quantum(&padre->task));
   //KERNEL_STACK_SIZE-16 para llegar al ctx hijo pusheado en la pila
   //hay que modificar el valor de retorno %eax
   //son->stack[KERNEL_STACK_SIZE-18] = 
@@ -105,6 +106,7 @@ int sys_fork()
   first_str->ebp_pos = (unsigned long)&son->stack[KERNEL_STACK_SIZE - 18]; //@dir
 
   //push a la cua de ready
+  son->task.state = READY;
   list_add_tail(&son->task.list,&readyqueue);
 
 
