@@ -47,7 +47,7 @@ int sys_fork()
   list_del(first);
   struct task_struct *first_str = list_head_to_task_struct(first);
   union task_union *padre = (union task_union *) current(); //union del pare
-  union task_union *son = padre;
+  union task_union *son = (union task_union *) first_str;
   //Copiar data pare a fill
   copy_data(padre,son,sizeof(union task_union));
   allocate_DIR(first_str);
@@ -95,7 +95,6 @@ int sys_fork()
   int pid_hijo = current()->PID + 200; //todos los procs del orden 200 serán hijos
   first_str->PID = pid_hijo;
   first_str->dir_pages_baseAddr = get_DIR(first_str);
-  set_quantum(first_str, get_quantum(&padre->task));
   //KERNEL_STACK_SIZE-16 para llegar al ctx hijo pusheado en la pila
   //hay que modificar el valor de retorno %eax
   //son->stack[KERNEL_STACK_SIZE-18] = 
@@ -103,14 +102,10 @@ int sys_fork()
   //ver diapo 54 tema4
   son->stack[KERNEL_STACK_SIZE-19] = 0; //ebp
   son->stack[KERNEL_STACK_SIZE-18] = (unsigned long) &ret_from_fork;//@ tornada
-  first_str->ebp_pos = (unsigned long)&son->stack[KERNEL_STACK_SIZE - 18]; //@dir
-
+  first_str->ebp_pos = (unsigned long)&son->stack[KERNEL_STACK_SIZE - 19]; //@dir
+  first_str->quantum = QUANTUM;
   //push a la cua de ready
-  son->task.state = READY;
   list_add_tail(&son->task.list,&readyqueue);
-
-
-
   return first_str->PID;
 }
 int ret_from_fork(){
