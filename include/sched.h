@@ -23,7 +23,7 @@ struct task_struct {
   struct list_head list;
   unsigned long ebp_pos;
   unsigned int quantum;
-  unsigned int state;
+  enum state_t state;
 };
 
 union task_union {

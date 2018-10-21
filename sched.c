@@ -50,7 +50,7 @@ void sched_next_rr(){
 		list_del(first);
 		aux = list_head_to_task_struct(first);
 	}else aux = idle_task;
-	aux->state = RUNNING;
+	aux->state = ST_RUN;
 	aux->quantum = QUANTUM;
 	task_switch((union task_union* )aux);
 }
@@ -65,12 +65,12 @@ int needs_sched_rr(){
 	} return 0;
 }
 void update_process_state_rr (struct task_struct* t, struct list_head *dst_queue){
-	if(t->state == READY){
+	if(t->state == ST_READY){
 		list_del(&t->list);
-		t->state = RUNNING;
-	}else if(t->state == RUNNING){
+		t->state = ST_RUN;
+	}else if(t->state == ST_RUN){
 		list_add_tail(&t->list,&readyqueue);
-		t->state = READY;
+		t->state = ST_READY;
 	}
 
 }
@@ -109,7 +109,6 @@ void init_idle (void)
 	first_str->ebp_pos = (unsigned long)&ctx->stack[KERNEL_STACK_SIZE - 2]; //posicion del stack donde guardamos el ebp
 	idle_task = first_str;
 	set_quantum(first_str, QUANTUM);
-  	writeMSR(INITIAL_ESP,0x175);
 }
 
 void init_task1(void)
@@ -117,6 +116,7 @@ void init_task1(void)
 	struct list_head *first = list_first(&freequeue); //obtenemos un taskunion
 	list_del(first);
 	struct task_struct *first_str = list_head_to_task_struct(first);
+	first_str->state = ST_RUN;
 	first_str->PID = 1;
 	allocate_DIR(first_str);
 	union task_union *ctx = (union task_union*)first_str;

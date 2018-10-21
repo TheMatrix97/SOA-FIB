@@ -102,7 +102,7 @@ int sys_fork()
   //ver diapo 54 tema4
   son->stack[KERNEL_STACK_SIZE-19] = 0; //ebp
   son->stack[KERNEL_STACK_SIZE-18] = (unsigned long) &ret_from_fork;//@ tornada
-  first_str->ebp_pos = (unsigned long)&son->stack[KERNEL_STACK_SIZE - 19]; //@dir
+  first_str->ebp_pos = (unsigned long)&son->stack[KERNEL_STACK_SIZE - 19]; //@ebp
   first_str->quantum = QUANTUM;
   //push a la cua de ready
   list_add_tail(&son->task.list,&readyqueue);
