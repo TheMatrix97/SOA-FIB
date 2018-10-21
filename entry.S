@@ -73,8 +73,8 @@
 
 ENTRY(keyboard_handler)
 	SAVE_ALL
-	call keyboard_routine
 	EOI
+	call keyboard_routine
 	RESTORE_ALL
 	iret
 	
@@ -106,7 +106,7 @@ sysenter_fin:
 	
 ENTRY(clock_handler)
 	SAVE_ALL
-	call clock_routine
 	EOI
+	call clock_routine
 	RESTORE_ALL
 	iret

@@ -52,7 +52,7 @@ void sched_next_rr(){
 	}else aux = idle_task;
 	aux->state = ST_RUN;
 	aux->quantum = QUANTUM;
-	task_switch((union task_union* )aux);
+	//task_switch((union task_union* )idle_task);
 }
 
 
@@ -103,6 +103,7 @@ void init_idle (void)
 	struct task_struct *first_str = list_head_to_task_struct(first);
 	first_str->PID = 0;
 	allocate_DIR(first_str);
+	first_str->dir_pages_baseAddr = get_DIR(first_str);
 	union task_union *ctx = (union task_union*)first_str;
 	ctx->stack[KERNEL_STACK_SIZE - 1] = (unsigned long) &cpu_idle; //dir del codigo a ejecutar por la nueva task
 	ctx->stack[KERNEL_STACK_SIZE - 2] = 0; //valor del ebp al volver
@@ -137,8 +138,8 @@ void init_sched(){
 }
 
 void inner_task_switch(union task_union *new){
-	tss.esp0 = (int)&(new -> stack[KERNEL_STACK_SIZE]);
 	set_cr3(new->task.dir_pages_baseAddr);
+	tss.esp0 = (int)&(new -> stack[KERNEL_STACK_SIZE]);
 	change_context(&current()->ebp_pos, new->task.ebp_pos);
 }
 
