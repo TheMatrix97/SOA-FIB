@@ -47,12 +47,12 @@ void sched_next_rr(){
 	struct task_struct* aux;
 	if(!list_empty(&readyqueue)){
 		struct list_head *first = list_first(&readyqueue);
-		list_del(first);
 		aux = list_head_to_task_struct(first);
+		list_del(first);
 	}else aux = idle_task;
 	aux->state = ST_RUN;
 	aux->quantum = QUANTUM;
-	//task_switch((union task_union* )idle_task);
+	task_switch((union task_union* )aux);
 }
 
 
@@ -65,14 +65,12 @@ int needs_sched_rr(){
 	} return 0;
 }
 void update_process_state_rr (struct task_struct* t, struct list_head *dst_queue){
-	if(t->state == ST_READY){
-		list_del(&t->list);
-		t->state = ST_RUN;
-	}else if(t->state == ST_RUN){
-		list_add_tail(&t->list,&readyqueue);
+	if(dst_queue == NULL) t->state = ST_RUN; //X to RUN
+	else if(dst_queue == &readyqueue){
+		if(t->state != ST_RUN) list_del(&t->list); //was blocked
 		t->state = ST_READY;
+		list_add_tail(&t->list, dst_queue);//ara esta a readyQ
 	}
-
 }
 
 
@@ -138,9 +136,10 @@ void init_sched(){
 }
 
 void inner_task_switch(union task_union *new){
-	set_cr3(new->task.dir_pages_baseAddr);
-	tss.esp0 = (int)&(new -> stack[KERNEL_STACK_SIZE]);
-	writeMSR((unsigned long)&(new->stack[KERNEL_STACK_SIZE]),0x175);
+	//set_cr3(new->task.dir_pages_baseAddr);
+	tss.esp0 = (unsigned long)&(new -> stack[KERNEL_STACK_SIZE]);
+	set_cr3(get_DIR((struct task_struct*) new));
+	//writeMSR((unsigned long)&(new->stack[KERNEL_STACK_SIZE]),0x175);
 	change_context(&current()->ebp_pos, new->task.ebp_pos);
 }
 
