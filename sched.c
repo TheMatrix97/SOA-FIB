@@ -124,7 +124,7 @@ void init_task1(void)
 	set_user_pages(first_str); //inicialitzar espai d'adreces del proc
 	tss.esp0 = (int)&(ctx->stack[KERNEL_STACK_SIZE]); //canviem el esp per a que apunti a la nova pila de proc //actualitzem el cr3 per a que apunti al directori del nou proc
 	set_quantum(first_str, QUANTUM);
-  	writeMSR((int)&(ctx->stack[KERNEL_STACK_SIZE]),0x175);
+  	writeMSR((unsigned long)&(ctx->stack[KERNEL_STACK_SIZE]),0x175);
   	set_cr3(first_str->dir_pages_baseAddr);
 }
 
@@ -140,7 +140,7 @@ void init_sched(){
 void inner_task_switch(union task_union *new){
 	set_cr3(new->task.dir_pages_baseAddr);
 	tss.esp0 = (int)&(new -> stack[KERNEL_STACK_SIZE]);
-	writeMSR((int)&(new->stack[KERNEL_STACK_SIZE]),0x175);
+	writeMSR((unsigned long)&(new->stack[KERNEL_STACK_SIZE]),0x175);
 	change_context(&current()->ebp_pos, new->task.ebp_pos);
 }
 
