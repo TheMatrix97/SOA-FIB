@@ -52,7 +52,7 @@ void sched_next_rr(){
 	}else aux = idle_task;
 	aux->state = ST_RUN;
 	aux->quantum = QUANTUM;
-	//task_switch((union task_union* )idle_task);
+	if(aux != current()) task_switch((union task_union* )aux);
 }
 
 
