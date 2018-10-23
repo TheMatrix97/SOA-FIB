@@ -114,6 +114,14 @@ int ret_from_fork(){
 
 void sys_exit()
 {  
+  int i;
+  for(i = 0; i<NUM_PAG_DATA;++i){
+    page_table_entry *PT = get_PT(current()); //obtenim la PT del proces actual
+    unsigned int frame = get_frame(PT, PAG_LOG_INIT_DATA+i); //obtenim el frame a alliberar
+    free_frame(frame); //alliberem el frame
+    del_ss_pag(PT, PAG_LOG_INIT_DATA+i); //eliminem l'entrada a la pag
+  }
+  sched_next_rr();
 }
 
 
