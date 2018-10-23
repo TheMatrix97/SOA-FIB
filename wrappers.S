@@ -100,3 +100,21 @@ labelExit:
 	addl $4, %esp
 	pop %ebp
 	ret
+
+ENTRY(get_stats)
+	push %ebp
+	movl %esp, %ebp
+	lea labelgetStats,%eax
+	//hacemos push de la direccion de retorno del sysenter
+	push %eax 
+	movl $35,%eax 
+	//35 = get_stats
+	push %ebp
+	//fake dynamic link para que el handler pueda acceder a los valores de esta pila
+	movl %esp,%ebp
+	sysenter
+labelgetStats:
+	pop %ebp
+	addl $4, %esp
+	pop %ebp
+	ret

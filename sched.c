@@ -64,17 +64,19 @@ int needs_sched_rr(){
 		return 1;
 	} return 0;
 }
+
 void update_process_state_rr (struct task_struct* t, struct list_head *dst_queue){
 	if(t->state == ST_READY){
 		list_del(&t->list);
 		t->state = ST_RUN;
+		t->sts.total_trans++;
 	}else if(t->state == ST_RUN){
 		list_add_tail(&t->list,&readyqueue);
 		t->state = ST_READY;
+		t->sts.total_trans++;
 	}
-
+	t->sts.elapsed_total_ticks = get_ticks();
 }
-
 
 int allocate_DIR(struct task_struct *t) 
 {
@@ -110,6 +112,15 @@ void init_idle (void)
 	first_str->ebp_pos = (unsigned long)&ctx->stack[KERNEL_STACK_SIZE - 2]; //posicion del stack donde guardamos el ebp
 	idle_task = first_str;
 	set_quantum(first_str, QUANTUM);
+
+	//INIT STATS
+	idle_task->sts.user_ticks = 0;
+	idle_task->sts.system_ticks = 0;
+	idle_task->sts.blocked_ticks = 0;
+	idle_task->sts.ready_ticks = 0;
+	idle_task->sts.elapsed_total_ticks = get_ticks();
+	idle_task->sts.total_trans = 0;
+	idle_task->sts.remaining_ticks = 0;
 }
 
 void init_task1(void)
@@ -126,6 +137,15 @@ void init_task1(void)
 	set_quantum(first_str, QUANTUM);
   	writeMSR((unsigned long)&(ctx->stack[KERNEL_STACK_SIZE]),0x175);
   	set_cr3(first_str->dir_pages_baseAddr);
+
+  	//INIT STATS
+	first_str->sts.user_ticks = 0;
+	first_str->sts.system_ticks = 0;
+	first_str->sts.blocked_ticks = 0;
+	first_str->sts.ready_ticks = 0;
+	first_str->sts.elapsed_total_ticks = get_ticks();
+	first_str->sts.total_trans = 0;
+	first_str->sts.remaining_ticks = 0;
 }
 
 

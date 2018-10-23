@@ -106,8 +106,19 @@ int sys_fork()
   first_str->quantum = QUANTUM;
   //push a la cua de ready
   list_add_tail(&son->task.list,&readyqueue);
+
+  //INIT STATS
+  first_str->sts.user_ticks = 0;
+  first_str->sts.system_ticks = 0;
+  first_str->sts.blocked_ticks = 0;
+  first_str->sts.ready_ticks = 0;
+  first_str->sts.elapsed_total_ticks = get_ticks();
+  first_str->sts.total_trans = 0;
+  first_str->sts.remaining_ticks = 0;
+
   return first_str->PID;
 }
+
 int ret_from_fork(){
 	return 0;
 }
@@ -145,5 +156,14 @@ int sys_write(int fd, char * buffer, int size){
 
 int sys_gettime(){
 	return zeos_ticks;
+}
+
+int sys_get_stats(int pid, struct stats *st){
+  if(pid < 0) return -1; //TODO Revisar codi error
+  int i;
+  for(i = 0; i < NR_TASKS; ++i){ //potser cal fer copy a user?
+    if(task[i].task.PID == pid) task[i].task.sts.remaining_ticks = get_quantum(current());
+  }
+  return 0;
 }
 
