@@ -104,6 +104,10 @@ labelExit:
 ENTRY(get_stats)
 	push %ebp
 	movl %esp, %ebp
+	pushl %ebx
+	pushl %ecx
+	movl 8(%ebp),%ebx
+	movl 12(%ebp),%ecx
 	lea labelgetStats,%eax
 	//hacemos push de la direccion de retorno del sysenter
 	push %eax 
@@ -116,5 +120,7 @@ ENTRY(get_stats)
 labelgetStats:
 	pop %ebp
 	addl $4, %esp
+	pop %ecx
+	pop %ebx
 	pop %ebp
 	ret

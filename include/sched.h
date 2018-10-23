@@ -79,5 +79,6 @@ void scheduler();
 void update_ticks_sys();
 void update_ticks_user();
 void init_stats(struct task_struct* aux);
+int get_stats(int pid, struct stats *st);
 
 #endif  /* __SCHED_H__ */
