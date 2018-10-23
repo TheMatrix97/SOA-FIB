@@ -18,6 +18,5 @@ ENTRY(change_context)
 	movl 4(%esp), %eax
 	movl %ebp, (%eax)
 	movl 8(%esp),%esp
-	movl (%eax), %esp
 	popl %ebp
 	ret
