@@ -103,6 +103,7 @@ void init_idle (void)
 	struct task_struct *first_str = list_head_to_task_struct(first);
 	first_str->PID = 0;
 	allocate_DIR(first_str);
+	set_user_pages(first_str);
 	first_str->dir_pages_baseAddr = get_DIR(first_str);
 	union task_union *ctx = (union task_union*)first_str;
 	ctx->stack[KERNEL_STACK_SIZE - 1] = (unsigned long) &cpu_idle; //dir del codigo a ejecutar por la nueva task
@@ -139,9 +140,9 @@ void init_sched(){
 
 void inner_task_switch(union task_union *new){
 	set_cr3(new->task.dir_pages_baseAddr);
-	tss.esp0 = (int)&(new -> stack[KERNEL_STACK_SIZE]);
+	tss.esp0 = (unsigned long)&(new -> stack[KERNEL_STACK_SIZE]);
 	writeMSR((unsigned long)&(new->stack[KERNEL_STACK_SIZE]),0x175);
-	change_context(&current()->ebp_pos, new->task.ebp_pos);
+	change_context(&current()->ebp_pos, &new->task.ebp_pos);
 }
 
 int get_quantum (struct task_struct* t){

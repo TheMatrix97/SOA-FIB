@@ -114,6 +114,13 @@ int ret_from_fork(){
 
 void sys_exit()
 {  
+ /* struct task_struct* c = current();
+  page_table_entry * currentPT = get_PT(c);
+  for(i = 0; i < NUM_PAG_DATA; ++i){ //(data+stack)
+    set_ss_pag(childPT, PAG_LOG_INIT_DATA+i, frames[i]);
+    
+  }*/
+
 }
 
 

@@ -83,3 +83,24 @@ labelFork:
 	pop %ebp
 	ret
 
+
+
+ENTRY(exit)
+	push %ebp
+	movl %esp, %ebp
+	lea labelexit,%eax
+	//hacemos push de la direccion de retorno del sysenter
+	push %eax 
+	movl $1,%eax 
+	//1 = sysexit
+	push %ebp
+	//fake dynamic link para que el handler pueda acceder a los valores de esta pila
+	movl %esp,%ebp
+	sysenter
+labelexit:
+	pop %ebp
+	addl $4, %esp
+	pop %ebp
+	ret
+
+
