@@ -5,6 +5,7 @@
 #include <sched.h>
 #include <interrupt.h>
 #include <mm.h>
+#include <utils.h>
 
 struct list_head freequeue;
 struct list_head readyqueue;
@@ -52,11 +53,17 @@ void sched_next_rr(){
 	}else aux = idle_task;
 	aux->state = ST_RUN;
 	aux->quantum = QUANTUM;
-	if(aux != current()) task_switch((union task_union* )aux);
+	if(aux != current()){
+		int ticks = get_ticks();
+		current()->sts.user_ticks += ticks - current()->sts.elapsed_total_ticks;
+		current()->sts.elapsed_total_ticks = ticks; 
+		task_switch((union task_union* )aux);
+	}
 }
 
 
 void update_sched_data_rr(){
+	current()->sts.remaining_ticks = current()->quantum - current()->sts.remaining_ticks;
 	current()->quantum--;
 }
 int needs_sched_rr(){
@@ -66,11 +73,15 @@ int needs_sched_rr(){
 }
 
 void update_process_state_rr (struct task_struct* t, struct list_head *dst_queue){
+	int elapsed_ticks = t->sts.elapsed_total_ticks;
 	if(t->state == ST_READY){
+		t->sts.ready_ticks += get_ticks() - elapsed_ticks;
+		t->sts.elapsed_total_ticks = get_ticks();
 		list_del(&t->list);
 		t->state = ST_RUN;
 		t->sts.total_trans++;
 	}else if(t->state == ST_RUN){
+		t->sts.system_ticks += get_ticks() - elapsed_ticks;
 		list_add_tail(&t->list,&readyqueue);
 		t->state = ST_READY;
 		t->sts.total_trans++;
@@ -181,5 +192,14 @@ struct task_struct* current()
 	: "=g" (ret_value)
   );
   return (struct task_struct*)(ret_value&0xfffff000);
+}
+
+void update_ticks_sys(){
+	current()->sts.system_ticks += get_ticks() - current()->sts.elapsed_total_ticks;
+	current()->sts.elapsed_total_ticks = get_ticks();
+}
+void update_ticks_user(){
+	current()->sts.user_ticks += get_ticks() - current()->sts.elapsed_total_ticks;
+	current()->sts.elapsed_total_ticks = get_ticks();
 }
 

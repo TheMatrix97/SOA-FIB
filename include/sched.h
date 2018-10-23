@@ -76,5 +76,7 @@ void update_sched_data_rr();
 int get_quantum (struct task_struct* t);
 void set_quantum (struct task_struct* t, int new_quantum);
 void scheduler();
+void update_ticks_sys();
+void update_ticks_user();
 
 #endif  /* __SCHED_H__ */

@@ -43,6 +43,13 @@ int __attribute__ ((__section__(".text.main")))
   int f = fork();
   itoa(f,aux2);
   write(1,&aux2[0],sizeof(aux2));
+  if(f == 0){
+    char aux2[24] = "Soy el hijo";
+    if(write(1,&aux2[0],sizeof(aux2)) < 0) perror();
+    exit();
+     aux[24] = "muerto";
+    if(write(1,&aux2[0],sizeof(aux2)) < 0) perror();
+  }
   while(1){
 	 //test gettime
 	 //print_time(); 

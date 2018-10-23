@@ -131,6 +131,8 @@ void sys_exit()
     unsigned int frame = get_frame(PT, PAG_LOG_INIT_DATA+i); //obtenim el frame a alliberar
     free_frame(frame); //alliberem el frame
     del_ss_pag(PT, PAG_LOG_INIT_DATA+i); //eliminem l'entrada a la pag
+    //marquem un pid invalid per get_stats
+    current()->PID = -1;
   }
   sched_next_rr();
 }
@@ -159,11 +161,14 @@ int sys_gettime(){
 }
 
 int sys_get_stats(int pid, struct stats *st){
-  if(pid < 0) return -1; //TODO Revisar codi error
+  if(pid < 0 || st == NULL) return -1; //TODO Revisar codi error
   int i;
   for(i = 0; i < NR_TASKS; ++i){ //potser cal fer copy a user?
-    if(task[i].task.PID == pid) task[i].task.sts.remaining_ticks = get_quantum(current());
+    if(task[i].task.PID == pid){
+      *st = task[i].task.sts;
+      return 0;
+    }
   }
-  return 0;
+  return -1;
 }
 
