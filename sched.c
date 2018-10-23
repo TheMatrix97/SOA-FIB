@@ -125,13 +125,7 @@ void init_idle (void)
 	set_quantum(first_str, QUANTUM);
 
 	//INIT STATS
-	idle_task->sts.user_ticks = 0;
-	idle_task->sts.system_ticks = 0;
-	idle_task->sts.blocked_ticks = 0;
-	idle_task->sts.ready_ticks = 0;
-	idle_task->sts.elapsed_total_ticks = get_ticks();
-	idle_task->sts.total_trans = 0;
-	idle_task->sts.remaining_ticks = 0;
+	init_stats(idle_task);
 }
 
 void init_task1(void)
@@ -149,14 +143,18 @@ void init_task1(void)
   	writeMSR((unsigned long)&(ctx->stack[KERNEL_STACK_SIZE]),0x175);
   	set_cr3(first_str->dir_pages_baseAddr);
 
-  	//INIT STATS
-	first_str->sts.user_ticks = 0;
-	first_str->sts.system_ticks = 0;
-	first_str->sts.blocked_ticks = 0;
-	first_str->sts.ready_ticks = 0;
-	first_str->sts.elapsed_total_ticks = get_ticks();
-	first_str->sts.total_trans = 0;
-	first_str->sts.remaining_ticks = 0;
+  	init_stats(first_str);
+}
+
+void init_stats(struct task_struct* aux){
+	//INIT STATS
+	aux->sts.user_ticks = 0;
+	aux->sts.system_ticks = 0;
+	aux->sts.blocked_ticks = 0;
+	aux->sts.ready_ticks = 0;
+	aux->sts.elapsed_total_ticks = get_ticks();
+	aux->sts.total_trans = 0;
+	aux->sts.remaining_ticks = 0;
 }
 
 

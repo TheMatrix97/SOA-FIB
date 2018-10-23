@@ -78,5 +78,6 @@ void set_quantum (struct task_struct* t, int new_quantum);
 void scheduler();
 void update_ticks_sys();
 void update_ticks_user();
+void init_stats(struct task_struct* aux);
 
 #endif  /* __SCHED_H__ */
