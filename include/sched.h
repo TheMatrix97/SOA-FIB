@@ -56,7 +56,7 @@ int ret_from_fork();
 struct task_struct * current();
 
 void task_switch(union task_union*t);
-void change_context(unsigned long* ebp_pos, unsigned long ebp_pos_new);
+void change_context(unsigned long* ebp_pos, unsigned long* ebp_pos_new);
 
 void inner_task_switch(union task_union *new);
 

@@ -170,7 +170,7 @@ void inner_task_switch(union task_union *new){
 	set_cr3(new->task.dir_pages_baseAddr);
 	tss.esp0 = (int)&(new -> stack[KERNEL_STACK_SIZE]);
 	writeMSR((unsigned long)&(new->stack[KERNEL_STACK_SIZE]),0x175);
-	change_context(&current()->ebp_pos, new->task.ebp_pos);
+	change_context(&current()->ebp_pos, &new->task.ebp_pos);
 }
 
 int get_quantum (struct task_struct* t){
