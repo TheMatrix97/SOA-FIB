@@ -69,14 +69,6 @@
 	movb $0x20, %al; \
 	outb %al, $0x20
 	
-
-
-ENTRY(keyboard_handler)
-	SAVE_ALL
-	call keyboard_routine
-	EOI
-	RESTORE_ALL
-	iret
 	
 ENTRY(syscall_handler_sysenter)
 	push $__USER_DS
@@ -103,10 +95,21 @@ sysenter_fin:
 	movl 12(%esp),%ecx
 	sti
 	sysexit
+
+ENTRY(keyboard_handler)
+	call update_ticks_user
+	SAVE_ALL
+	EOI
+	call keyboard_routine
+	RESTORE_ALL
+	call update_ticks_sys
+	iret
 	
 ENTRY(clock_handler)
+	call update_ticks_user
 	SAVE_ALL
-	call clock_routine
 	EOI
+	call clock_routine
 	RESTORE_ALL
+	call update_ticks_sys
 	iret

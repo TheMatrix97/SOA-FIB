@@ -60,6 +60,7 @@ inline void set_seg_regs(Word data_sel, Word stack_sel, DWord esp)
  
 int zeos_ticks;
 
+
 int __attribute__((__section__(".text.main")))
   main(void)
 {
@@ -79,6 +80,7 @@ int __attribute__((__section__(".text.main")))
   zeos_ticks = 0;
 
 
+
   /* Initialize hardware data */
   setGdt(); /* Definicio de la taula de segments de memoria */
   setIdt(); /* Definicio del vector de interrupcions */
@@ -89,7 +91,7 @@ int __attribute__((__section__(".text.main")))
 
 /* Initialize an address space to be used for the monoprocess version of ZeOS */
 
-  monoprocess_init_addr_space(); /* TO BE DELETED WHEN ADDED THE PROCESS MANAGEMENT CODE TO BECOME MULTIPROCESS */
+  //monoprocess_init_addr_space(); /* TO BE DELETED WHEN ADDED THE PROCESS MANAGEMENT CODE TO BECOME MULTIPROCESS */
 
   /* Initialize Scheduling */
   init_sched();

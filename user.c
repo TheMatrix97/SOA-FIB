@@ -39,10 +39,18 @@ int __attribute__ ((__section__(".text.main")))
  
   char aux[24] = "Hello world";
   if(write(1,&aux[0],sizeof(aux)) < 0) perror();
- 
+  char aux2[24];
+  int f = fork();
+  itoa(f,aux2);
+  write(1,&aux2[0],sizeof(aux2));
+  if(f == 0){
+    char aux2[24] = "Soy el hijo";
+    if(write(1,&aux2[0],sizeof(aux2)) < 0) perror();
+    exit();
+  }
   while(1){
-	  //test gettime
-	  //print_time(); 
+	 //test gettime
+	 //print_time(); 
 	}
   return 0;
 }

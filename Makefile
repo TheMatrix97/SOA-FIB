@@ -26,7 +26,7 @@ SYSLDFLAGS = -T system.lds
 USRLDFLAGS = -T user.lds
 LINKFLAGS = -g
 
-SYSOBJ = interrupt.o entry.o sys_call_table.o io.o sched.o sys.o mm.o devices.o utils.o hardware.o list.o writeMSR.o
+SYSOBJ = interrupt.o entry.o sys_call_table.o io.o sched.o sys.o mm.o devices.o utils.o hardware.o list.o writeMSR.o taskSwitch.o
 
 LIBZEOS = -L . -l zeos
 
@@ -68,6 +68,12 @@ writeMSR.s: writeMSR.S Makefile
 	$(CPP) $(ASMFLAGS) -traditional $< -o $@
 
 writeMSR.o: writeMSR.s
+	$(AS) -o $@ $<
+
+taskSwitch.s: taskSwitch.S Makefile
+	$(CPP) $(ASMFLAGS) -traditional $< -o $@
+
+taskSwitch.o: taskSwitch.s
 	$(AS) -o $@ $<
 
 entry.s: entry.S $(INCLUDEDIR)/asm.h $(INCLUDEDIR)/segment.h
