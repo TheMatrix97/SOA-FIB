@@ -8,12 +8,6 @@
 
 int errno;
 
-void perror(){
-		char buff[2];
-		itoa(-errno, buff);
-		write(1, &buff[0], sizeof(buff)); 
-}
-
 void itoa(int a, char *b)
 {
   int i, i1;
@@ -49,3 +43,11 @@ int strlen(char *a)
   return i;
 }
 
+void perror()
+{
+  char buffer[256];
+
+  itoa(errno, buffer);
+
+  write(1, buffer, strlen(buffer));
+}

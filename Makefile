@@ -20,18 +20,18 @@ INCLUDEDIR = include
 # Define here flags to compile the tests if needed
 JP =
 
-CFLAGS = -O2 -g $(JP) -fno-omit-frame-pointer -ffreestanding -Wall -I$(INCLUDEDIR)
+CFLAGS = -O2  -g $(JP) -fno-omit-frame-pointer -ffreestanding -Wall -I$(INCLUDEDIR)
 ASMFLAGS = -I$(INCLUDEDIR)
 SYSLDFLAGS = -T system.lds
 USRLDFLAGS = -T user.lds
 LINKFLAGS = -g
 
-SYSOBJ = interrupt.o entry.o sys_call_table.o io.o sched.o sys.o mm.o devices.o utils.o hardware.o list.o writeMSR.o taskSwitch.o
+SYSOBJ = interrupt.o entry.o sys_call_table.o io.o sched.o sys.o mm.o devices.o utils.o hardware.o list.o p_stats.o kernel-utils.o
 
-LIBZEOS = -L . -l zeos
+LIBZEOS = -L . -l zeos -l auxjp
 
 #add to USROBJ the object files required to complete the user program
-USROBJ = libc.o suma.o wrappers.o # libjp.a
+USROBJ = libc.o user-utils.o # libjp.a
 
 all:zeos.bin
 
@@ -52,31 +52,13 @@ bootsect.o: bootsect.s
 bootsect.s: bootsect.S Makefile
 	$(CPP) $(ASMFLAGS) -traditional $< -o $@
 
-wrappers.s: wrappers.S Makefile
-	$(CPP) $(ASMFLAGS) -traditional $< -o $@
-
-wrappers.o: wrappers.s
-	$(AS) -o $@ $<
-
-suma.s: suma.S Makefile
-	$(CPP) $(ASMFLAGS) -traditional $< -o $@
-
-suma.o: suma.s
-	$(AS) -o $@ $<
-	
-writeMSR.s: writeMSR.S Makefile
-	$(CPP) $(ASMFLAGS) -traditional $< -o $@
-
-writeMSR.o: writeMSR.s
-	$(AS) -o $@ $<
-
-taskSwitch.s: taskSwitch.S Makefile
-	$(CPP) $(ASMFLAGS) -traditional $< -o $@
-
-taskSwitch.o: taskSwitch.s
-	$(AS) -o $@ $<
-
 entry.s: entry.S $(INCLUDEDIR)/asm.h $(INCLUDEDIR)/segment.h
+	$(CPP) $(ASMFLAGS) -o $@ $<
+
+user-utils.s: user-utils.S $(INCLUDEDIR)/asm.h
+	$(CPP) $(ASMFLAGS) -o $@ $<
+
+kernel-utils.s: kernel-utils.S $(INCLUDEDIR)/asm.h
 	$(CPP) $(ASMFLAGS) -o $@ $<
 
 sys_call_table.s: sys_call_table.S $(INCLUDEDIR)/asm.h $(INCLUDEDIR)/segment.h
@@ -98,6 +80,7 @@ sys.o:sys.c $(INCLUDEDIR)/devices.h
 
 utils.o:utils.c $(INCLUDEDIR)/utils.h
 
+p_stats.o:p_stats.c $(INCLUDEDIR)/utils.h
 
 system.o:system.c $(INCLUDEDIR)/hardware.h system.lds $(SYSOBJ) $(INCLUDEDIR)/segment.h $(INCLUDEDIR)/types.h $(INCLUDEDIR)/interrupt.h $(INCLUDEDIR)/system.h $(INCLUDEDIR)/sched.h $(INCLUDEDIR)/mm.h $(INCLUDEDIR)/io.h $(INCLUDEDIR)/mm_address.h 
 
