@@ -96,6 +96,7 @@ void setTrapHandler(int vector, void (*handler)(), int maxAccessibleFromPL)
 void clock_handler();
 void keyboard_handler();
 void system_call_handler();
+void system_call_int_handler();
 
 void setMSR(unsigned long msr_number, unsigned long high, unsigned long low);
 
@@ -117,6 +118,7 @@ void setIdt()
   /* ADD INITIALIZATION CODE FOR INTERRUPT VECTOR */
   setInterruptHandler(32, clock_handler, 0);
   setInterruptHandler(33, keyboard_handler, 0);
+  setTrapHandler(0x80, system_call_int_handler, 3);
 
   setSysenter();
 

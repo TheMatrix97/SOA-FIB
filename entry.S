@@ -117,3 +117,18 @@ sysenter_fin:
 	movl 12(%esp), %ecx	      // User stack address
 	sti
 	sysexit
+
+ENTRY(system_call_int_handler)
+      SAVE_ALL
+      cmpl $0, %eax
+      jl err
+      cmpl $MAX_SYSCALL, %eax
+      jg err
+      call *sys_call_table(, %EAX, 0x04)
+      jmp fin
+err:
+      movl $-ENOSYS, %EAX
+fin:
+      movl %EAX, 0x18(%esp)
+      RESTORE_ALL
+      iret
