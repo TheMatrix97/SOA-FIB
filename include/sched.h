@@ -73,8 +73,11 @@ page_table_entry * get_DIR (struct task_struct *t) ;
 void sched_next_rr();
 void update_process_state_rr(struct task_struct *t, struct list_head *dest);
 int needs_sched_rr();
-void update_sched_data_rr();
+void update_sched_data_rr(); 
 
 void init_stats(struct stats *s);
+
+void block_process(struct list_head *block_queue);
+void unblock_process(struct task_struct *blocked);
 
 #endif  /* __SCHED_H__ */

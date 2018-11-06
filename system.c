@@ -8,6 +8,7 @@
 #include <hardware.h>
 #include <system.h>
 #include <sched.h>
+#include <schedperf.h>
 #include <mm.h>
 #include <io.h>
 #include <utils.h>
@@ -86,7 +87,7 @@ int __attribute__((__section__(".text.main")))
 /* Initialize an address space to be used for the monoprocess version of ZeOS */
 
   //monoprocess_init_addr_space(); /* TO BE DELETED WHEN ADDED THE PROCESS MANAGEMENT CODE TO BECOME MULTIPROCESS */
-
+  zeos_console_init();
   /* Initialize Scheduling */
   init_sched();
 
