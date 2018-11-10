@@ -2,9 +2,7 @@
 #include <sched.h>
 
 char buff[24];
-
 int pid;
-
 
 long workload1(long n){
 	int i;
@@ -16,21 +14,21 @@ long workload1(long n){
 }
 
 void print_one_stat(int st){
-	char user[10];
+	char user[100];
 	itoa(st,user);
-	write(1,&user[0],strlen(user));
+	write(1,&user[0],strlen(user) + 1);
 }
 
 void print_stats(int pid){
-	struct stats *st;
-	get_stats(pid,st);
+	struct stats st;
+	int a = get_stats(pid,&st);
 	char aux[10];
 	itoa(pid,aux);
-	write(1,&aux[0], strlen(aux));
-	print_one_stat(st->user_ticks);
-	print_one_stat(st->blocked_ticks);
-	print_one_stat(st->ready_ticks);
-	print_one_stat(st->system_ticks);
+	write(1,&aux[0], strlen(aux) + 1);
+	print_one_stat(st.user_ticks);
+	print_one_stat(st.blocked_ticks);
+	print_one_stat(st.ready_ticks);
+	print_one_stat(st.system_ticks);
 
 }
 
@@ -42,17 +40,23 @@ int __attribute__ ((__section__(".text.main")))
 	set_sched_policy(0);
 	int i = 0;
 	int nhijos = 3;
-	int n = 100;
+	int n = 1000;
+	int glob = 1001;
 	for(i = 0; i < nhijos; i++){
 		int pid = fork();
 		if(pid == 0){
 			long res = workload1(n);
-			char buff[10];
+			/*char buff[10];
 			itoa(res,buff);
-			write(1,&buff[0],strlen(buff)+1);
+			write(1,&buff[0],strlen(buff)+1);*/
+			print_stats(getpid()); 
 			while(1){}
 		}
 	}
 
+	read(0,NULL,200);
+	print_stats(getpid());
+	
+	
   while(1) { }
 }
