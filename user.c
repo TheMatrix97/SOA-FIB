@@ -49,13 +49,13 @@ int __attribute__ ((__section__(".text.main")))
 			/*char buff[10];
 			itoa(res,buff);
 			write(1,&buff[0],strlen(buff)+1);*/
-			print_stats(getpid()); 
-			while(1){}
+			print_stats(getpid());
+			exit(0);
 		}
 	}
 
 	read(0,NULL,200);
-	print_stats(getpid());
+	print_stats(0); //print idle
 	
 	
   while(1) { }

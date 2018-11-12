@@ -76,7 +76,6 @@ int needs_sched_rr();
 void update_sched_data_rr(); 
 
 void init_stats(struct stats *s);
-
 void block_process(struct list_head *block_queue);
 void unblock_process(struct task_struct *blocked);
 
