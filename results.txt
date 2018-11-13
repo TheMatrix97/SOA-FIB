@@ -1,0 +1,5 @@
+PROC	user	blocked	ready	sys
+proc1	54	0	83	0
+proc2	54	0	96	0
+proc3	54	0	111	0
+idle	242	0	169	0

@@ -32,16 +32,10 @@ void print_stats(int pid){
 
 }
 
-int __attribute__ ((__section__(".text.main")))
-  main(void)
-{
-    /* Next line, tries to move value 0 to CR3 register. This register is a privileged one, and so it will raise an exception */
-     /* __asm__ __volatile__ ("mov %0, %%cr3"::"r" (0) ); */
-	set_sched_policy(0);
+void work1(){
 	int i = 0;
 	int nhijos = 3;
 	int n = 1000;
-	int glob = 1001;
 	for(i = 0; i < nhijos; i++){
 		int pid = fork();
 		if(pid == 0){
@@ -56,7 +50,51 @@ int __attribute__ ((__section__(".text.main")))
 
 	read(0,NULL,200);
 	print_stats(0); //print idle
-	
-	
-  while(1) { }
+	exit(0);
+}
+   
+void work2(){
+	int i = 0;
+	int nhijos = 3;
+	for(i = 0; i < nhijos; i++){
+		int pid = fork();
+		if(pid == 0){
+			read(0, NULL, 200);
+			print_stats(getpid());
+			exit(0);
+		}
+	}
+	read(0, NULL, 750);
+	print_stats(0); 
+	exit(0);
+}
+  
+void work3(){
+	int i = 0;
+	int nhijos = 3;
+	for(i = 0; i < nhijos; i++){
+		int pid = fork();
+		if(pid == 0){
+			int n = 1000 * (i+5);
+			workload1(n);
+			read(0,NULL, 200);
+			print_stats(getpid());
+			exit(0);
+		}
+	}
+	read(0,NULL,1500);
+	print_stats(0);
+	exit(0);
+}
+int __attribute__ ((__section__(".text.main")))
+  main(void)
+{
+    /* Next line, tries to move value 0 to CR3 register. This register is a privileged one, and so it will raise an exception */
+     /* __asm__ __volatile__ ("mov %0, %%cr3"::"r" (0) ); */
+	set_sched_policy(1);
+	//set_sched_policy(1); 
+	//work1();
+	//work2();
+	work3();
+	while(1) { }
 }
