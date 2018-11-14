@@ -31,7 +31,7 @@ void print_stats(int pid){
 	print_one_stat(st.system_ticks);
 
 }
-
+ 
 void work1(){
 	int i = 0;
 	int nhijos = 3;
@@ -91,10 +91,10 @@ int __attribute__ ((__section__(".text.main")))
 {
     /* Next line, tries to move value 0 to CR3 register. This register is a privileged one, and so it will raise an exception */
      /* __asm__ __volatile__ ("mov %0, %%cr3"::"r" (0) ); */
-	set_sched_policy(1);
+	set_sched_policy(0);
 	//set_sched_policy(1); 
-	//work1();
+	work1();
 	//work2();
-	work3();
+	//work3();
 	while(1) { }
 }

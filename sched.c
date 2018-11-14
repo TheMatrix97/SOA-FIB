@@ -275,23 +275,21 @@ void force_task_switch()
   sched_next_rr();
 }
 
-void block_process(struct list_head *block_queue){
-  struct task_struct *t = current();
-  struct stats *st = get_task_stats(t);
-  st->system_ticks = get_ticks() - st->elapsed_total_ticks;
-  st->elapsed_total_ticks = get_ticks();
-  update_process_state(t, block_queue);
-  sched_next();
+void block_process(struct list_head *block_queue) {
+	struct task_struct *t = current();
+	struct stats *st = get_task_stats(t);
+	st->system_ticks = get_ticks()-st->elapsed_total_ticks;
+	st->elapsed_total_ticks = get_ticks(); sched_next();
+	update_process_state(t, block_queue);
 }
 
 void unblock_process(struct task_struct *blocked){
-  struct stats *st = get_task_stats(blocked);
-  //struct list_head *l = get_task_list(blocked);
-  st->blocked_ticks += (get_ticks() - st->elapsed_total_ticks);
-  st->elapsed_total_ticks = get_ticks();
-  update_process_state(blocked, &readyqueue);
-  if(needs_sched()){
-    update_process_state(current(), &readyqueue);
-    sched_next();
-  }
+	struct stats *st = get_task_stats(blocked);
+	st->blocked_ticks += (get_ticks()-st->elapsed_total_ticks);
+	st->elapsed_total_ticks = get_ticks();
+	update_process_state(blocked, &readyqueue);
+	if (needs_sched()) {
+		update_process_state(current(), &readyqueue);
+		sched_next();
+	}
 }
