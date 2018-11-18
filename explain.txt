@@ -1,0 +1,28 @@
+Workload 1:
+	Disposem d'un pare que es l'encarregat de crear els 3 fills que estudiarem, cada fill ha de ejecutar un bucle for de 10.000 iteracions i al finalitzar imprimir les seves estadistiques.
+	A més a més quan el pare acaba de crear tots els fills, s'espera 200 tics i imprimeix les estadistiques del procés idle.
+
+	Resultats RR:
+	Com el temps de cpu es reparteix equitativament entre tots els procesos, aproximadament triguen el mateix en executar el workload amb el mateix nombre de tics de user, ready
+
+	Resultats FCFS:
+	En aquest cas podem veure que encara tenin el mateix temps d'execució de codi user, el total augmenta linealment, aixó es degut a un convoi entre procesos (proc3 ha d'esperar a la finalització de proc1 i proc2) que es pot apreciar en el temps de ready.
+
+Workload 2:
+	Com en el workload 1 disposem d'un pare que crea els 3 fills, amb la diferencia que aquest cop els fills no executen codi, sino que només es bloquejaràn 200 tics i seguidament imprimiran les seves estadistiques. Amb la diferencia que aquest cop esperarem 1500 tics per imprimir les estadistiques de idle
+
+	Resultats RR:
+	En aquest cas esperavem veure el mateix temps de bloqueig entre els 3 procesos, però no ha sigut així. Sembla que proc3 ha d'esperar a que es desbloqueixin proc1 i proc2, cosa que no hauria de ser així
+
+	Resultats FCFS:
+	En aquest cas pasa el mateix que a RR
+
+Workload 3:
+	Es torna a crear un pare que aquest creará els 3 procesos a estudiar. En aquest cas el treball a executar es diferent: proc 3 té més treball que proc2 i aquest més que proc1. a més a més entre la finalització del treball i la impressió de les estadistiques hi ha un petit temps de bloqueig
+
+	Resultats RR:
+	El user ticks augmenta amb el nombre de proc, degut a la politica del RR podem observar com el temps de ready es semblant (excepte proc1 ja que es primer en executarse). Idle no arriba a executar-se mai
+
+	Resultats FCFS:
+	En aquest cas podem observar com el temps de ready disminueix segons el num de proc, aixó es degut a que just al finalitzar el treball el proc es bloqueja i fins que no es finalitza el treball dels altres procs no imprimeix els resultats (es queda penjat en la ready queue). El bloqueig que hi ha abans d'imprimir les estadistiques provoca que s'equilibri el temps total.
+
