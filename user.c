@@ -35,7 +35,7 @@ void print_stats(int pid){
 void work1(){
 	int i = 0;
 	int nhijos = 3;
-	int n = 1000;
+	int n = 10000;
 	for(i = 0; i < nhijos; i++){
 		int pid = fork();
 		if(pid == 0){
@@ -75,7 +75,7 @@ void work3(){
 	for(i = 0; i < nhijos; i++){
 		int pid = fork();
 		if(pid == 0){
-			int n = 1000 * (i+5);
+			int n = 1000 * (i+7);
 			workload1(n);
 			read(0,NULL, 200);
 			print_stats(getpid());
@@ -91,10 +91,10 @@ int __attribute__ ((__section__(".text.main")))
 {
     /* Next line, tries to move value 0 to CR3 register. This register is a privileged one, and so it will raise an exception */
      /* __asm__ __volatile__ ("mov %0, %%cr3"::"r" (0) ); */
-	set_sched_policy(0);
+	set_sched_policy(1);  
 	//set_sched_policy(1); 
-	work1();
+	//work1();
 	//work2();
-	//work3();
+	work3();
 	while(1) { }
 }
