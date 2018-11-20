@@ -10,7 +10,7 @@ long workload1(long n){
 	for(i=0;i<n*n;i++){
 		sum++;
 	}
-	return sum;
+	return sum; 
 }
 
 void print_one_stat(int st){
@@ -68,6 +68,27 @@ void work2(){
 	print_stats(0); 
 	exit(0);
 }
+
+void work4(){
+	int i = 0;
+	int nhijos = 3;
+	for(i = 0; i < nhijos; i++){
+		int pid = fork();
+		if(pid == 0){
+			if(i == 0) read(0, NULL, 950);
+			else if(i == 1) workload1(10000);
+			else{
+				workload1(1000 * (i+5));
+				read(0, NULL, 1200);
+			}
+			print_stats(getpid());
+			exit(0);
+		}
+	}
+	read(0, NULL, 750);
+	print_stats(0); 
+	exit(0);
+} 
   
 void work3(){
 	int i = 0;
@@ -76,7 +97,7 @@ void work3(){
 		int pid = fork();
 		if(pid == 0){
 			int n = 1000 * (i+7);
-			workload1(n);
+			workload1(n); 
 			read(0,NULL, 200);
 			print_stats(getpid());
 			exit(0);
@@ -95,6 +116,7 @@ int __attribute__ ((__section__(".text.main")))
 	//set_sched_policy(1); 
 	//work1();
 	//work2();
-	work3();
+	//work3();
+	work4();
 	while(1) { }
 }

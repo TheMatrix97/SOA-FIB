@@ -1,3 +1,5 @@
+**Per probar els workloads em compilat user.c sense optimització (-O0)**
+
 Workload 1:
 	Disposem d'un pare que es l'encarregat de crear els 3 fills que estudiarem, cada fill ha de ejecutar un bucle for de 10.000 iteracions i al finalitzar imprimir les seves estadistiques.
 	A més a més quan el pare acaba de crear tots els fills, s'espera 200 tics i imprimeix les estadistiques del procés idle.
@@ -9,6 +11,8 @@ Workload 1:
 	En aquest cas podem veure que encara tenin el mateix temps d'execució de codi user, el total augmenta linealment, aixó es degut a un convoi entre procesos (proc3 ha d'esperar a la finalització de proc1 i proc2) que es pot apreciar en el temps de ready.
 
 Workload 2:
+	**Sembla que la blocked_queue no treu els procesos en quant el seu temps de blocked arriba a 0, si no que es queda esperant a que els procesos per davant del mateix es desbloqueixin primer**
+
 	Com en el workload 1 disposem d'un pare que crea els 3 fills, amb la diferencia que aquest cop els fills no executen codi, sino que només es bloquejaràn 200 tics i seguidament imprimiran les seves estadistiques. Amb la diferencia que aquest cop esperarem 1500 tics per imprimir les estadistiques de idle
 
 	Resultats RR:
@@ -26,3 +30,12 @@ Workload 3:
 	Resultats FCFS:
 	En aquest cas podem observar com el temps de ready disminueix segons el num de proc, aixó es degut a que just al finalitzar el treball el proc es bloqueja i fins que no es finalitza el treball dels altres procs no imprimeix els resultats (es queda penjat en la ready queue). El bloqueig que hi ha abans d'imprimir les estadistiques provoca que s'equilibri el temps total.
 
+Workload 4:
+	Els tres fills creats pel pare fan tasques diferents: el primer es bloqueja, el segon executa codi usuari i el tercer té una càrrega de codi usuari una mica menor i es bloqueja més temps que el primer.
+
+	Resultats RR:
+		Els gràfics mostren com proc1 només es bloqueja un cert nombre de ticks, proc2 només executa codi de user i finalment proc3 executa i es bloqueja. Tal com hem repartit els temps d'execució proc1 es el primer en 
+		finalitzat, seguidament del 3 i del 2.
+	
+	Resultats FCFS:
+		En aquest cas degut a que proc1 es bloqueja salta a la cua de ready, i proc 2 no deixa la cpu fins que s'executa tot el codi, mentrestant proc1 ja s'ha desbloquejat i està esperant a la cua de ready. Al finalitzar proc2 entra proc3 i executa tot el seu codi.
