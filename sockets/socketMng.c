@@ -18,6 +18,18 @@
 int
 createServerSocket (int port)
 {
+  struct sockaddr_in serv_addr;
+  struct hostent * hent;
+
+  int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+  if(socket_fd < 0) return -1;
+  hent = gethostbyname("localhost");
+  memcpy((char *)&serv_addr.sin_addr.s_addr, (char *) hent->h_addr, hent->h_length);
+  serv_addr.sin_port = htons(port);
+  serv_addr.sin_family = PF_INET;
+  if(bind(socket_fd,(struct sockaddr *) &serv_addr, sizeof (serv_addr)) < 0) return -1;
+  listen(socket_fd,69);
+  return socket_fd;
 }
 
 
@@ -29,6 +41,9 @@ createServerSocket (int port)
 int
 acceptNewConnections (int socket_fd)
 {
+    struct sockaddr_in client_addr;
+    socklen_t addr_size = sizeof(client_addr);
+    return accept(socket_fd, (struct sockaddr *)&client_addr, &addr_size); //Esperamos una conexion*
 
 }
 
