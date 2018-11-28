@@ -1,4 +1,4 @@
-all: serverSocket clientSocket launchClient serverSocketUnbounded
+all: serverSocket clientSocket launchClient serverSocketUnbounded serverSocketBounded
 unbounded: serverSocketUnbounded clientSocket launchClient
 bounded: serverSocketBounded clientSocket launchClient
 
