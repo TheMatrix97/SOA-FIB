@@ -1,4 +1,4 @@
-all: serverSocket clientSocket launchClient
+all: serverSocket clientSocket launchClient serverSocketUnbounded
 unbounded: serverSocketUnbounded clientSocket launchClient
 bounded: serverSocketBounded clientSocket launchClient
 
@@ -22,4 +22,6 @@ socketMng.o: socketMng.c
 
 clean: 
 	rm -f serverSocket clientSocket serverSocketUnbounded serverSocketBounded socketMng.o launchClient
+ultraclean:
+	rm -f serverSocket clientSocket serverSocketUnbounded serverSocketBounded socketMng.o launchClient client_* launch_info
  
