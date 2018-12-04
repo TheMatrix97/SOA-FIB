@@ -1,31 +1,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <fcntl.h>
-#include <signal.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/time.h>
-#define MAX_CHILDS 5
+#include <pthread.h>
 
-int num_childs;
-
-void doServiceFork(int fd){
-	num_childs++;
-	if(fork() == 0){
-		doService(fd);
-		exit(0);
-	}
-	close(fd);
-}
-
-doService(int fd) {
-int i = 0;
-char buff[80]; 	
-char buff2[80];
-int ret;
-int socket_fd = (int) fd;
-
+void *doService(void * fd) {
+	int i = 0;
+	char buff[80];
+	char buff2[80];
+	int ret;
+	int socket_fd = (int) fd;
 	ret = read(socket_fd, buff, sizeof(buff));
 	while(ret > 0) {
 		buff[ret]='\0';
@@ -34,7 +17,7 @@ int socket_fd = (int) fd;
 		ret = write(fd, "caracola ", 8);
 		if (ret < 0) {
 			perror ("Error writing to socket");
-			exit(1);
+			pthread_exit((void *) 1);
 		}
 		ret = read(socket_fd, buff, sizeof(buff));
 	}
@@ -47,12 +30,14 @@ int socket_fd = (int) fd;
 
 }
 
-void trat_sigchld(int signum){
-	while (waitpid(-1, NULL, WNOHANG) > 0){
-		printf("Ha muerto un hijo\n");
-		num_childs--;
-	} 
+void doServiceFork(int fd, int id){
+	pthread_t thread = id;
+	if(pthread_create(&thread,NULL,doService, (void *) fd)){
+		perror("Error creando el thread");
+		exit(1);
+	}
 }
+
 
 main (int argc, char *argv[])
 {
@@ -61,35 +46,33 @@ main (int argc, char *argv[])
   char buffer[80];
   int ret;
   int port;
-  num_childs = 0;
-  signal(SIGCHLD,trat_sigchld);
+  int id = 0;
 
-  if (argc != 2){
+  if (argc != 2)
+    {
       strcpy (buffer, "Usage: ServerSocket PortNumber\n");
       write (2, buffer, strlen (buffer));
       exit (1);
-  }
+    }
 
   port = atoi(argv[1]);
   socketFD = createServerSocket (port);
-  if (socketFD < 0){
+  if (socketFD < 0)
+    {
       perror ("Error creating socket\n");
       exit (1);
     }
 
   while (1) {
-  	if(num_childs < MAX_CHILDS){
-  		printf("Entro\n");
-		connectionFD = acceptNewConnections (socketFD);
-		if (connectionFD < 0){
-			perror ("Error establishing connection \n");
-			deleteSocket(socketFD);
-			exit (1);
-		}
-		doServiceFork(connectionFD);
-	}else{
-		printf("Se ha alcanzado el max de hijos\n");
-	}
+	  connectionFD = acceptNewConnections (socketFD);
+	  if (connectionFD < 0)
+	  {
+		  perror ("Error establishing connection \n");
+		  deleteSocket(socketFD);
+		  exit (1);
+	  }
+
+	  doServiceFork(connectionFD, ++id);
   }
 
 }

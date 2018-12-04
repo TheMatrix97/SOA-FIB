@@ -11,12 +11,11 @@ void doServiceFork(int fd){
 }
 
 doService(int fd) {
-int i = 0;
-char buff[80];
-char buff2[80];
-int ret;
-int socket_fd = (int) fd;
-
+	int i = 0;
+	char buff[80];
+	char buff2[80];
+	int ret;
+	int socket_fd = (int) fd;
 	ret = read(socket_fd, buff, sizeof(buff));
 	while(ret > 0) {
 		buff[ret]='\0';
