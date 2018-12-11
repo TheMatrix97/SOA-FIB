@@ -1,0 +1,13 @@
+Gràfiques: Per cada tipus de servidor hem fet 2 gràfiques. La primera variant el nombre de clients, alhora que mantenim els nombre de missatges per client estàtic. La segona es l'inversa, hem mantingut el nombre de clients estàtic i variat el nombre de missatges per client
+
+Sequential server:
+A la primera gràfica podem observar com el temps d'execució augmenta progressivament. Aquest comportament també es pot apreciar a la segona gràfica, on es pot apreciar clarament aquest comportament
+
+Unbounded server:
+En aquesta versió podem apreciar el mateix comportament que amb la versió sequencial, però treballant amb rangs menors.
+
+
+Bounded server:
+En aquest cas partim de un boundary de 5. Es pot apreciar al mateix comportament però a partir de 25 clients, el temps d'execució es veu incrementat substancialment
+
+Extra
