@@ -28,7 +28,7 @@ createServerSocket (int port)
   serv_addr.sin_port = htons(port);
   serv_addr.sin_family = PF_INET;
   if(bind(socket_fd,(struct sockaddr *) &serv_addr, sizeof (serv_addr)) < 0) return -1;
-  listen(socket_fd,10);
+  listen(socket_fd,2000);
   return socket_fd;
 }
 
