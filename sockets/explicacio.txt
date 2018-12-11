@@ -10,4 +10,6 @@ En aquesta versió podem apreciar el mateix comportament que amb la versió sequ
 Bounded server:
 En aquest cas partim de un boundary de 5. Es pot apreciar al mateix comportament però a partir de 25 clients, el temps d'execució es veu incrementat substancialment
 
-Extra
+Extra:
+Al primer gràfic podem veure un creixement lineal fins a 35 clients on trobem un augment sobtat del temps d'execució.
+En el segon gràfic, trobem el mateix comportament que a la versió unbounded però amb un temps d'execució lleugerament menor.
